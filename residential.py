@@ -27,7 +27,7 @@ def find_address_id(city_id, address_formatted, zip_code, cursor):
         cursor.execute(query)
         row = cursor.fetchone()
         if (row == None):
-            print(f"Could not find {city_id}, {address_formatted}.")
+            print(f"INSERT INTO address (address_formatted, zip_code, city_id) VALUES ('{address_formatted}', '{zip_code}', {city_id});")
         else:
             (address_id, ) = row
 
