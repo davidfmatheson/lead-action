@@ -1,0 +1,4 @@
+jproperties==2.1.0
+mysql-connector-python==8.0.24
+protobuf==3.15.8
+six==1.15.0
