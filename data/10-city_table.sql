@@ -1366,7 +1366,6 @@ INSERT INTO city(id, name, county_id) VALUES (1361, 'Gillette', 3059);
 INSERT INTO city(id, name, county_id) VALUES (1362, 'Tooele', 2741);
 INSERT INTO city(id, name, county_id) VALUES (1363, 'Prattville', 1);
 INSERT INTO city(id, name, county_id) VALUES (1364, 'Woodburn', 2186);
-INSERT INTO city(id, name, county_id) VALUES (1365, 'Watertown Town', 1206);
 INSERT INTO city(id, name, county_id) VALUES (1366, 'Calumet City', 602);
 INSERT INTO city(id, name, county_id) VALUES (1367, 'San Juan Capistrano', 209);
 INSERT INTO city(id, name, county_id) VALUES (1368, 'Foothill Farms', 213);
