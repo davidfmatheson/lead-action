@@ -27,6 +27,9 @@ def find_address_id(city_id, address_formatted, zip_code, cursor):
         cursor.execute(query)
         row = cursor.fetchone()
         if (row == None):
+            if ("LLC" in address_formatted):
+                print(f"Address has LLC: {address_formatted}")
+            
             print(f"INSERT INTO address (address_formatted, zip_code, city_id) VALUES ('{address_formatted}', '{zip_code}', {city_id});")
         else:
             (address_id, ) = row
@@ -70,6 +73,15 @@ with open("data/db.properties", "rb") as config_file:
 
                         address_formatted = row["ADDRESS1"].title().strip().replace("'", "''")
                         address_zip = row["ZIP"].strip()
+                        address_zip_4 = ""
+                        
+                        if (re.match(r"[0-9]{5}-[0-9]{4}", address_zip)):
+                            zips = address_zip.split("-")
+                            address_zip = zips[0]
+                            address_zip_4 = zips[1]
+                        elif (re.match(r"[0-9]{5}[0-9]{4}", address_zip)):
+                            address_zip_4 = address_zip[-4:]
+                            address_zip = address_zip[0:5]
                         
                         find_address_id(city_ids[key], address_formatted, address_zip, cursor)
                 cursor.close()    
