@@ -39,6 +39,23 @@ def find_address_id(city_id, address_formatted, zip_code, cursor):
 
     return address_id
 
+def find_owner_id(owner_name, address_id, cursor):
+    owner_id = -1
+
+    if (address_id > 0):
+        query = f"SELECT id as owner_id FROM owner WHERE name = '{owner_name}' AND address_id = {address_id};"
+
+        cursor.execute(query)
+        row = cursor.fetchone()
+        if (row == None):
+            print(f"Could not find {owner_name}")
+        else:
+            (owner_id, ) = row
+
+            while (cursor.fetchone()):
+                print(f"There was more than one row for {owner_name}, {address_id}.")
+    return owner_id
+
 county_fips_id = {}
 city_ids = {}
 configs = Properties()
@@ -58,32 +75,33 @@ with open("data/db.properties", "rb") as config_file:
                     i = 0
                     for row in reader:
                         i = i + 1
-                        state = row["STATE"].strip()
-                        city = row["CITY"].title().strip()
+                        owner_state = row["STATE"].strip()
+                        owner_city = row["CITY"].title().strip()
                         
-                        key = f"{city}-{state}"
+                        key = f"{owner_city}-{owner_state}"
                         
                         if (not key in city_ids):
-                            percent = i * 100.0 / 44191.0
-                            # print(f"We are {percent}% done")
-                            city_id = find_city_id(city, state, cursor)
+                            city_id = find_city_id(owner_city, owner_state, cursor)
                             city_ids[key] = city_id
                         
-                        name = row["OWNER"].title().strip()
+                        owner_name = row["OWNER"].title().strip()
 
-                        address_formatted = row["ADDRESS1"].title().strip().replace("'", "''")
-                        address_zip = row["ZIP"].strip()
-                        address_zip_4 = ""
+                        owner_address_formatted = row["ADDRESS1"].title().strip().replace("'", "''")
+                        owner_address_zip = row["ZIP"].strip()
+                        owner_address_zip_4 = ""
                         
-                        if (re.match(r"[0-9]{5}-[0-9]{4}", address_zip)):
-                            zips = address_zip.split("-")
-                            address_zip = zips[0]
-                            address_zip_4 = zips[1]
-                        elif (re.match(r"[0-9]{5}[0-9]{4}", address_zip)):
-                            address_zip_4 = address_zip[-4:]
-                            address_zip = address_zip[0:5]
+                        if (re.match(r"[0-9]{5}-[0-9]{4}", owner_address_zip)):
+                            zips = owner_address_zip.split("-")
+                            owner_address_zip = zips[0]
+                            owner_address_zip_4 = zips[1]
+                        elif (re.match(r"[0-9]{5}[0-9]{4}", owner_address_zip)):
+                            owner_address_zip_4 = owner_address_zip[-4:]
+                            owner_address_zip = owner_address_zip[0:5]
                         
-                        find_address_id(city_ids[key], address_formatted, address_zip, cursor)
+                        owner_address_id = find_address_id(city_ids[key], owner_address_formatted, owner_address_zip, cursor)
+
+                        if (owner_address_id):
+                            print(f"INSERT INTO owner (name, address_id) VALUES ('{owner_name}', {owner_address_id});")
                 cursor.close()    
             connection.close()
     except Error as e:
